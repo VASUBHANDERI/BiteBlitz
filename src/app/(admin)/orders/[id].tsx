@@ -13,6 +13,7 @@ import OrderListItem from "../../../components/OrderListItem";
 import Colors from "@/constants/Colors";
 import { OrderStatusList } from "@/types";
 import { useOrderDetails, useUpdateOrder } from "@/api/orders";
+import { useUpdateOrderSubscription } from "@/api/orders/subscription";
 
 const OrderDetailScreen = () => {
   const { id: idString } = useLocalSearchParams();
@@ -24,6 +25,8 @@ const OrderDetailScreen = () => {
   const updateStatus = (status: string) => {
     updateOrder({ id: id, updatedFields: { status } });
   };
+
+  useUpdateOrderSubscription(id);
 
   if (isLoading) {
     return <ActivityIndicator />;

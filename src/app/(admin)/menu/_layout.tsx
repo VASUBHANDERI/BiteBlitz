@@ -24,18 +24,7 @@ export default function MenuLayout() {
                     />
                   )}
                 </Pressable>
-                <Link
-                  href={{
-                    pathname: `/(admin)/menu/create`,
-                    params: {
-                      id: "",
-                      name: "",
-                      price: "",
-                      image: "",
-                    },
-                  }}
-                  asChild
-                >
+                <Link href="/(admin)/menu/create" asChild>
                   <Pressable>
                     {({ pressed }) => (
                       <FontAwesome

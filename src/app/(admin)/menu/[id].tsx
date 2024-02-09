@@ -15,6 +15,7 @@ import { useCart } from "@/providers/CartProvider";
 import { FontAwesome } from "@expo/vector-icons";
 import Colors from "@/constants/Colors";
 import { useProduct } from "@/api/products";
+import RemoteImage from "@/components/RemoteImage";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 const defaultImage =
@@ -25,7 +26,6 @@ const ProductDetailsScreen = () => {
   const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
 
   const { data: product, error, isLoading } = useProduct(id);
-
 
   if (isLoading) {
     return <ActivityIndicator />;
@@ -38,9 +38,7 @@ const ProductDetailsScreen = () => {
     );
   }
 
-  useEffect(() => {
-    
-  }, [])
+
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -48,13 +46,7 @@ const ProductDetailsScreen = () => {
           title: "Menu",
           headerRight: () => {
             return (
-              <Link
-                href={{
-                  pathname: `/(admin)/menu/create`,
-                  params: { id: id, name: product?.name ?? "", price: product?.price ?? 0, image: product?.image ?? "" },
-                }}
-                asChild
-              >
+              <Link href={`/(admin)/menu/create?id=${id}`} asChild>
                 <Pressable>
                   {({ pressed }) => (
                     <FontAwesome
@@ -71,10 +63,10 @@ const ProductDetailsScreen = () => {
         }}
       />
       <Stack.Screen options={{ title: product?.name }} />
-      <Image
-        source={{ uri: product?.image || defaultImage }}
-        style={styles.image}
-        resizeMode="contain"
+      <RemoteImage
+        path={product?.image}
+        fallback={defaultImage}
+        style={{ ...styles.image, resizeMode: "contain" }}
       />
       <Text style={styles.name}>{product?.name}</Text>
       <Text style={styles.price}>Price: ${product?.price.toFixed(2)}</Text>
