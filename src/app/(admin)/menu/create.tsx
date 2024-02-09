@@ -32,6 +32,7 @@ const CreateScreen = () => {
     typeof productName === "string" ? productName : productName[0];
   const ProductPrice =
     typeof productPrice === "string" ? productPrice : productPrice[0];
+
   const isUpdating = !!id;
   useEffect(() => {
     console.log(ProductName);
@@ -108,7 +109,6 @@ const CreateScreen = () => {
 
     updateProduct(
       {
-        created_at: Date.now().toString(),
         id,
         name,
         price: parseFloat(price),

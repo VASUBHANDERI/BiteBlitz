@@ -1,9 +1,26 @@
-import { FlatList } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import orders from "@assets/data/orders";
 import OrderListItem from "@components/OrderListItem";
 import { Stack } from "expo-router";
+import { useAdminOrderList } from "@/api/orders";
+import { ActivityIndicator } from "react-native";
 
 export default function OrdersScreen() {
+  const {
+    data: orders,
+    isLoading,
+    error,
+  } = useAdminOrderList({ archived: true });
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+  if (error) {
+    return (
+      <View>
+        <Text>{error.message}</Text>
+      </View>
+    );
+  }
   return (
     <>
       <FlatList

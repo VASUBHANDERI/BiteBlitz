@@ -26,7 +26,6 @@ const ProductDetailsScreen = () => {
 
   const { data: product, error, isLoading } = useProduct(id);
 
-  const router = useRouter();
 
   if (isLoading) {
     return <ActivityIndicator />;
@@ -52,7 +51,7 @@ const ProductDetailsScreen = () => {
               <Link
                 href={{
                   pathname: `/(admin)/menu/create`,
-                  params: { id: id, name: product?.name ?? "", price: product?.price ?? "", image: product?.image ?? "" },
+                  params: { id: id, name: product?.name ?? "", price: product?.price ?? 0, image: product?.image ?? "" },
                 }}
                 asChild
               >
