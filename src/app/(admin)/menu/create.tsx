@@ -15,7 +15,6 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import {
   useDeleteProduct,
   useInsertProduct,
-  useProduct,
   useUpdateProduct,
 } from "@/api/products";
 
@@ -108,7 +107,13 @@ const CreateScreen = () => {
     }
 
     updateProduct(
-      { id, name, price: parseFloat(price), image },
+      {
+        created_at: Date.now().toString(),
+        id,
+        name,
+        price: parseFloat(price),
+        image,
+      },
       {
         onSuccess: () => {
           resetFields();

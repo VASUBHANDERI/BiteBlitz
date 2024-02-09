@@ -6,7 +6,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "../../../components/Button";
 import { PizzaSize } from "../../../types";
 import products from "../../../../assets/data/products";
@@ -39,6 +39,9 @@ const ProductDetailsScreen = () => {
     );
   }
 
+  useEffect(() => {
+    
+  }, [])
   return (
     <View style={styles.container}>
       <Stack.Screen
@@ -49,7 +52,7 @@ const ProductDetailsScreen = () => {
               <Link
                 href={{
                   pathname: `/(admin)/menu/create`,
-                  params: { id: id, name: product?.name,price:product?.price,image:product?.image },
+                  params: { id: id, name: product?.name ?? "", price: product?.price ?? "", image: product?.image ?? "" },
                 }}
                 asChild
               >
