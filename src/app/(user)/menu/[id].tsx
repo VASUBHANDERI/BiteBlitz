@@ -1,19 +1,31 @@
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  ActivityIndicator,
+} from "react-native";
 import React, { useState } from "react";
 import Button from "../../../components/Button";
 import { PizzaSize } from "../../../types";
-import products from "../../../../assets/data/products";
+
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useCart } from "@/providers/CartProvider";
+import { useProduct } from "@/api/products";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 const defaultImage =
   "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png";
 
 const ProductDetailsScreen = () => {
-  const { id } = useLocalSearchParams();
+  const { id: idString } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
+
+  const { data: product, error, isLoading } = useProduct(id);
+
   const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
-  const product = products.find((p) => p.id.toString() === id);
+
   const { addItem } = useCart();
   const router = useRouter();
 
@@ -22,7 +34,17 @@ const ProductDetailsScreen = () => {
     addItem(product, selectedSize);
     router.push("/cart");
   };
-  if (!product) return <Text>Product not found</Text>;
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+  if (error) {
+    return (
+      <View>
+        <Text>{error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
