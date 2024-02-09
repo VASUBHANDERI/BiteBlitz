@@ -12,7 +12,18 @@ export default function MenuLayout() {
           title: "Menu",
           headerRight: () => {
             return (
-              <Link href="/(admin)/menu/create" asChild>
+              <Link
+                href={{
+                  pathname: `/(admin)/menu/create`,
+                  params: {
+                    id: "",
+                    name: "",
+                    price: "",
+                    image: "",
+                  },
+                }}
+                asChild
+              >
                 <Pressable>
                   {({ pressed }) => (
                     <FontAwesome
@@ -28,7 +39,6 @@ export default function MenuLayout() {
           },
         }}
       />
-      
     </Stack>
   );
 }

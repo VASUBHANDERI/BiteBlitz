@@ -1,27 +1,73 @@
-import { View, Text, StyleSheet, Image, TextInput, Alert } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TextInput,
+  Alert,
+  ScrollView,
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import Colors from "../../../constants/Colors";
 import Button from "../../../components/Button";
 import * as ImagePicker from "expo-image-picker";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  useDeleteProduct,
+  useInsertProduct,
+  useProduct,
+  useUpdateProduct,
+} from "@/api/products";
 
 const CreateScreen = () => {
-  const [image, setImage] = useState<string | null>(null);
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
+  const {
+    id: idString,
+    name: productName,
+    price: productPrice,
+    image: productImage,
+  } = useLocalSearchParams();
+  const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
+  const ProductImage =
+    typeof productImage === "string" ? productImage : productImage[0];
+  const ProductName =
+    typeof productName === "string" ? productName : productName[0];
+  const ProductPrice =
+    typeof productPrice === "string" ? productPrice : productPrice[0];
+  const isUpdating = !!id;
+  useEffect(() => {
+    console.log(ProductName);
+    console.log(ProductPrice);
+    console.log(ProductImage);
+    console.log(id);
+  }, []);
+
+  const [image, setImage] = useState<string | null>(ProductImage || null);
+  const [name, setName] = useState(ProductName != "" ? ProductName : "");
+  const [price, setPrice] = useState(ProductPrice != "" ? ProductPrice : "");
   const [errors, setErrors] = useState("");
+
   const defaultPizzaImage =
     "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png";
 
-  const { id } = useLocalSearchParams();
-  const isUpdating = !!id;
+  const { mutate: insertProduct } = useInsertProduct();
+  const { mutate: updateProduct } = useUpdateProduct();
+  const { mutate: deleteProduct } = useDeleteProduct();
 
   const router = useRouter();
+
+  const resetFields = () => {
+    setName("");
+    setPrice("");
+  };
 
   const validateInput = () => {
     setErrors("");
     if (!name) {
       setErrors("Name is required");
+      return false;
+    }
+    if (name.trim().length === 0) {
+      setErrors("Name can't be white spaces only");
       return false;
     }
     if (!price) {
@@ -40,22 +86,36 @@ const CreateScreen = () => {
       return;
     }
 
-    console.warn("Creating dish");
-    setName("");
-    setPrice("");
-    setImage("");
-    router.back();
+    console.warn("Creating :", name);
+
+    insertProduct(
+      {
+        name,
+        price: parseFloat(price),
+        image,
+      },
+      {
+        onSuccess: () => {
+          resetFields();
+          router.back();
+        },
+      }
+    );
   };
   const onUpdate = () => {
     if (!validateInput()) {
       return;
     }
 
-    console.warn("Updating dish");
-    setName("");
-    setPrice("");
-    setImage("");
-    router.back();
+    updateProduct(
+      { id, name, price: parseFloat(price), image },
+      {
+        onSuccess: () => {
+          resetFields();
+          router.back();
+        },
+      }
+    );
   };
 
   const onSubmit = () => {
@@ -66,7 +126,12 @@ const CreateScreen = () => {
     }
   };
   const onDelete = () => {
-    console.warn("Deleting dish");
+    deleteProduct(id, {
+      onSuccess: () => {
+        resetFields();
+        router.replace("/(admin)");
+      },
+    });
   };
 
   const confirmDelete = () => {
@@ -102,44 +167,48 @@ const CreateScreen = () => {
       <Stack.Screen
         options={{ title: isUpdating ? "Update Product" : "Create Product" }}
       />
-      <Image
-        source={{ uri: image || defaultPizzaImage }}
-        style={styles.image}
-        resizeMode="contain"
-      />
-      <Text onPress={pickImage} style={styles.textButton}>
-        Select Image
-      </Text>
-
-      <Text style={styles.label}>Name</Text>
-      <TextInput
-        value={name}
-        onChangeText={setName}
-        placeholder="Margarita..."
-        style={styles.input}
-      />
-
-      <Text style={styles.label}>Price ($)</Text>
-      <TextInput
-        value={price}
-        onChangeText={setPrice}
-        placeholder="9.99"
-        style={styles.input}
-        keyboardType="numeric"
-      />
-      <Text style={styles.error}>{errors}</Text>
-      <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
-      {isUpdating && (
-        <Text onPress={confirmDelete} style={styles.textButton}>
-          Delete
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Image
+          source={{ uri: image || defaultPizzaImage }}
+          style={styles.image}
+          resizeMode="contain"
+        />
+        <Text onPress={pickImage} style={styles.textButton}>
+          Select Image
         </Text>
-      )}
+
+        <Text style={styles.label}>Name</Text>
+        <TextInput
+          value={name}
+          onChangeText={setName}
+          placeholder="Margarita..."
+          style={styles.input}
+        />
+
+        <Text style={styles.label}>Price ($)</Text>
+        <TextInput
+          value={price}
+          onChangeText={setPrice}
+          placeholder="9.99"
+          style={styles.input}
+          keyboardType="numeric"
+        />
+        <Text style={styles.error}>{errors}</Text>
+        <Button onPress={onSubmit} text={isUpdating ? "Update" : "Create"} />
+        {isUpdating && (
+          <Text onPress={confirmDelete} style={styles.textButton}>
+            Delete
+          </Text>
+        )}
+      </ScrollView>
     </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+    flex: 1,
+    justifyContent: "center",
   },
   image: {
     width: "50%",
@@ -154,6 +223,7 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "gray",
+    fontSize: 16,
   },
   input: {
     borderWidth: 1,

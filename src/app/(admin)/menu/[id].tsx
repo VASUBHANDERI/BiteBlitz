@@ -25,16 +25,9 @@ const ProductDetailsScreen = () => {
   const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
 
   const { data: product, error, isLoading } = useProduct(id);
-  const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
 
-  const { addItem } = useCart();
   const router = useRouter();
 
-  const addToCart = () => {
-    if (!product) return;
-    addItem(product, selectedSize);
-    router.push("/cart");
-  };
   if (isLoading) {
     return <ActivityIndicator />;
   }
@@ -53,7 +46,13 @@ const ProductDetailsScreen = () => {
           title: "Menu",
           headerRight: () => {
             return (
-              <Link href={`/(admin)/menu/create?id=${id}`} asChild>
+              <Link
+                href={{
+                  pathname: `/(admin)/menu/create`,
+                  params: { id: id, name: product?.name,price:product?.price,image:product?.image },
+                }}
+                asChild
+              >
                 <Pressable>
                   {({ pressed }) => (
                     <FontAwesome
