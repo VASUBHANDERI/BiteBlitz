@@ -7,10 +7,17 @@ import { ActivityIndicator } from "react-native";
 import { supabase } from "@/lib/supabase";
 
 const index = () => {
+  console.log(
+    "############################Starting Index Screen ############################"
+  );
+
   const { session, loading, isAdmin } = useAuth();
 
   if (loading) {
+    console.log("indexScreen loading: ", loading);
     return <ActivityIndicator />;
+  } else {
+    console.log("indexScreen isAdmin Check: ", isAdmin);
   }
 
   if (!session) {

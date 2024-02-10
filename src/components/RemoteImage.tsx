@@ -30,7 +30,7 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
         };
       }
     })();
-    console.log("path", path);
+
   }, [path]);
 
   if (!image) {

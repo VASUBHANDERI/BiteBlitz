@@ -14,16 +14,6 @@ export default function MenuLayout() {
           headerRight: () => {
             return (
               <>
-                <Pressable onPress={() => supabase.auth.signOut()}>
-                  {({ pressed }) => (
-                    <FontAwesome
-                      name="sign-out"
-                      size={25}
-                      color={Colors.light.tint}
-                      style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                    />
-                  )}
-                </Pressable>
                 <Link href="/(admin)/menu/create" asChild>
                   <Pressable>
                     {({ pressed }) => (
