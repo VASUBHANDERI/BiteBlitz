@@ -11,34 +11,31 @@ const index = () => {
     "############################Starting Index Screen ############################"
   );
 
-  const { session, loading, isAdmin } = useAuth();
+  const { session, loading, isAdmin, isLoggedIn, setIsLoggedin } = useAuth();
 
   if (loading) {
     console.log("indexScreen loading: ", loading);
     return <ActivityIndicator />;
-  } else {
-    console.log("indexScreen isAdmin Check: ", isAdmin);
-  }
-
-  if (!session) {
-    return <Redirect href={"/sign-in"} />;
-  }
-
-  if (!isAdmin) {
+  } else if (!isLoggedIn) {
+    console.log("Found Session: ", session);
+    return <Redirect href={"/(auth)/sign-in"} />;
+  } else if (!isAdmin) {
     return <Redirect href={"/(user)"} />;
   }
-  return (
-    <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
-      <Link href={"/(user)"} asChild>
-        <Button text="User" />
-      </Link>
-      <Link href={"/(admin)"} asChild>
-        <Button text="Admin" />
-      </Link>
+  if (isAdmin) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
+        <Link href={"/(user)"} asChild>
+          <Button text="User" />
+        </Link>
+        <Link href={"/(admin)"} asChild>
+          <Button text="Admin" />
+        </Link>
 
-      <Button text="Sign Out" onPress={() => supabase.auth.signOut()} />
-    </View>
-  );
+        <Button text="Sign Out" onPress={() => supabase.auth.signOut()} />
+      </View>
+    );
+  }
 };
 
 export default index;

@@ -18,10 +18,13 @@ function TabBarIcon(props: {
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
-  const { isAdmin } = useAuth();
+  const { isAdmin,isLoggedIn } = useAuth();
 
   if (!isAdmin) {
     return <Redirect href={"/"} />;
+  }
+  if(!isLoggedIn){
+    return <Redirect href={"/(auth)/sign-in"} />;
   }
   return (
     <Tabs
@@ -53,6 +56,13 @@ export default function TabLayout() {
           title: "Orders",
           headerShown: false,
           tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
         }}
       />
     </Tabs>
