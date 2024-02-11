@@ -1,4 +1,5 @@
 import { supabase } from "@/lib/supabase";
+import { Tables } from "@/types";
 import { Session } from "@supabase/supabase-js";
 import { Redirect } from "expo-router";
 import {
@@ -8,9 +9,7 @@ import {
   useEffect,
   useState,
 } from "react";
-type ProfileType = {
-  group: string;
-};
+type ProfileType = Tables<"profiles"> | null;
 type AuthData = {
   session: Session | null;
   loading: boolean;
@@ -35,7 +34,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
   const [profile, setProfile] = useState<ProfileType | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   useEffect(() => {
     const fetchSession = async () => {
       console.log(
@@ -94,7 +93,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     setIsAdmin(profile?.group === "ADMIN");
     console.log("on onAuthStateChange isAdmin: ", isAdmin);
     setLoading(false);
-  }, [isAdmin,isLoggedIn]);
+  }, [isAdmin, isLoggedIn]);
 
   const setIsLoggedin = (isLoggedin: boolean) => {
     setIsLoggedIn(isLoggedin);
