@@ -1,4 +1,4 @@
-import { CartItem, Tables } from "@/types";
+import { CartItem, PizzaSize, Tables } from "@/types";
 import { PropsWithChildren, createContext, useContext, useState } from "react";
 import { randomUUID } from "expo-crypto";
 import { useInsertOrder } from "@/api/orders";
@@ -52,8 +52,20 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     setItems(updatedItems.filter((item) => item.quantity > 0) as CartItem[]); // remove if empty
   };
   // calculate total
-  const total = items.reduce(
-    (sum, item) => sum + item.quantity * item.product.price,
+  const getFactor = (size: PizzaSize) => {
+    if (size == "M") {
+      return 1;
+    } else if (size == "L") {
+      return 1.5;
+    } else if (size == "XL") {
+      return 2;
+    } else if (size == "S") {
+      return 0.8;
+    }
+    return 1;
+  };
+  const total: number = items.reduce(
+    (sum: number, item: CartItem) => sum + item.quantity * item.product.price * getFactor(item.size),
     0
   );
   const clearCart = () => {

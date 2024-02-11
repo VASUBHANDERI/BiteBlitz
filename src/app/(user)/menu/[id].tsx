@@ -16,6 +16,7 @@ import { useProduct } from "@/api/products";
 import RemoteImage from "@/components/RemoteImage";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
+const priceFactor: number[] = [0.8, 1, 1.5, 2];
 const defaultImage =
   "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png";
 
@@ -26,6 +27,20 @@ const ProductDetailsScreen = () => {
   const { data: product, error, isLoading } = useProduct(id);
 
   const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
+
+  const getFactor = (size: PizzaSize) => {
+    if (size == "M") {
+      return 1;
+    } else if (size == "L") {
+      return 1.5;
+    } else if (size == "XL") {
+      return 2;
+    } else if (size == "S") {
+      return 0.8;
+    }
+    return 1;
+  };
+
 
   const { addItem } = useCart();
   const router = useRouter();
@@ -80,7 +95,9 @@ const ProductDetailsScreen = () => {
           </Pressable>
         ))}
       </View>
-      <Text style={styles.price}>Price: ${product?.price.toFixed(2)}</Text>
+      <Text style={styles.price}>
+        Price: ${product ? (product.price * getFactor(selectedSize)).toFixed(2) : ''}
+      </Text>
       <Button onPress={addToCart} text="Add to cart" />
     </View>
   );
