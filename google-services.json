@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "526809328710",
+    "project_id": "biteblitz-d880f",
+    "storage_bucket": "biteblitz-d880f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526809328710:android:f76ca66b5a07478e106e47",
+        "android_client_info": {
+          "package_name": "com.vasu_002.BiteBlitz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzmNuFsv5YCarf3ti00xvJNMWXAJPBjSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
