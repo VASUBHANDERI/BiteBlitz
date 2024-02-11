@@ -208,7 +208,7 @@ const CreateProductScreen = () => {
         style={styles.input}
       />
 
-      <Text style={styles.label}>Price ($)</Text>
+      <Text style={styles.label}>Price (₹)</Text>
       <TextInput
         value={price}
         onChangeText={setPrice}
@@ -234,6 +234,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     padding: 10,
+    backgroundColor:'#fff',
   },
   image: {
     width: "50%",
@@ -253,6 +254,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginTop: 5,
     marginBottom: 20,
+    borderWidth:1,
+    borderColor:'gainsboro',
   },
   label: {
     color: "gray",

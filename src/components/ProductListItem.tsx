@@ -27,7 +27,7 @@ export default function ProductListItem({ product }: ProductListItemProps) {
             style={{ ...styles.image, resizeMode: "contain" }}
           />
           <Text style={styles.title}>{product.name}</Text>
-          <Text style={styles.price}>${product.price.toFixed(2)}</Text>
+          <Text style={styles.price}>₹{product.price.toFixed(2)}</Text>
         </Pressable>
       </Link>
     );
@@ -44,6 +44,11 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     flex: 1,
     maxWidth: "50%",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   image: {
     width: "100%",

@@ -4,6 +4,7 @@ import Button from "../../components/Button";
 import Colors from "../../constants/Colors";
 import { Link, Stack } from "expo-router";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/providers/AuthProvider";
 
 const SignUpScreen = () => {
   const [email, setEmail] = useState("");
@@ -13,8 +14,11 @@ const SignUpScreen = () => {
   const signUpWithEmail = async () => {
     setLoading(true);
     const { error } = await supabase.auth.signUp({ email, password });
-if (error) Alert.alert(error.message);
-    else console.log(`Account created for ${email}`);
+    if (error) Alert.alert(error.message);
+    else {
+      console.log(`Account created for ${email}`);
+    }
+
     setLoading(false);
   };
 
@@ -39,7 +43,11 @@ if (error) Alert.alert(error.message);
         secureTextEntry
       />
 
-      <Button onPress={signUpWithEmail} text={loading?"Creating account...":"Create account"}  disabled={loading}/>
+      <Button
+        onPress={signUpWithEmail}
+        text={loading ? "Creating account..." : "Create account"}
+        disabled={loading}
+      />
       <Link href="/sign-in" style={styles.textButton}>
         Sign in
       </Link>

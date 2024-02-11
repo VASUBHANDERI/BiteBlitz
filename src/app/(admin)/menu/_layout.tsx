@@ -31,6 +31,7 @@ export default function MenuLayout() {
           },
         }}
       />
+      <Stack.Screen name="[id]" options={{ title: " " }} />
     </Stack>
   );
 }

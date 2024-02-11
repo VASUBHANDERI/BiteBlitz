@@ -20,7 +20,7 @@ const Bill = ({ orderTotal }: BillProps) => {
           <Text style={styles.title}>Subtotal</Text>
         </View>
         <View style={styles.quantitySelector}>
-          <Text style={styles.finalTotal}>{orderTotal.toFixed(2)}</Text>
+          <Text style={styles.finalTotal}>₹{orderTotal.toFixed(2)}</Text>
         </View>
       </View>
       <View style={styles.rowContainer}>
@@ -28,7 +28,7 @@ const Bill = ({ orderTotal }: BillProps) => {
           <Text style={styles.title}>GST (5%)</Text>
         </View>
         <View style={styles.quantitySelector}>
-          <Text style={styles.finalTotal}>{GST.toFixed(2)}</Text>
+          <Text style={styles.finalTotal}>₹{GST.toFixed(2)}</Text>
         </View>
       </View>
       <View style={styles.rowContainer}>
@@ -36,7 +36,7 @@ const Bill = ({ orderTotal }: BillProps) => {
           <Text style={styles.title}>Delivery</Text>
         </View>
         <View>
-          <Text style={styles.finalTotal}>{Delivery.toFixed(2)}</Text>
+          <Text style={styles.finalTotal}>₹{Delivery.toFixed(2)}</Text>
         </View>
       </View>
       <View style={styles.lastRowContainer}>
@@ -44,7 +44,7 @@ const Bill = ({ orderTotal }: BillProps) => {
           <Text style={styles.Totaltitle}>Grand Total</Text>
         </View>
         <View style={styles.quantitySelector}>
-          <Text style={styles.grandTotal}>{GrandTotal.toFixed(2)}</Text>
+          <Text style={styles.grandTotal}>₹{GrandTotal.toFixed(2)}</Text>
         </View>
       </View>
     </View>
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 5,
     flex: 1,
+   
     // flexDirection: "row",
     // alignItems: "center",
   },
@@ -72,13 +73,13 @@ const styles = StyleSheet.create({
   },
   lastRowContainer: {
     backgroundColor: "white",
-    marginTop:3,
+    marginTop: 3,
     padding: 1,
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    borderTopColor:"gainsboro",
-    borderTopWidth:1,
+    borderTopColor: "gainsboro",
+    borderTopWidth: 1,
   },
   title: {
     fontWeight: "500",

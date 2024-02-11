@@ -95,6 +95,9 @@ export default function AuthProvider({ children }: PropsWithChildren) {
 
   const setIsLoggedin = (isLoggedin: boolean) => {
     setIsLoggedIn(isLoggedin);
+    // if (!isLoggedIn) {
+    //   setSession(null);
+    // }
   };
 
   return (

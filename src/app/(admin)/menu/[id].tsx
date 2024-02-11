@@ -6,19 +6,20 @@ import {
   Pressable,
   ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "../../../components/Button";
 import { PizzaSize } from "../../../types";
-import products from "../../../../assets/data/products";
+
 import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useCart } from "@/providers/CartProvider";
-import { FontAwesome } from "@expo/vector-icons";
-import Colors from "@/constants/Colors";
 import { useProduct } from "@/api/products";
 import RemoteImage from "@/components/RemoteImage";
 import Loader from "@/components/Loader";
+import { FontAwesome } from "@expo/vector-icons";
+import Colors from "@/constants/Colors";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
+const priceFactor: number[] = [0.8, 1, 1.5, 2];
 const defaultImage =
   "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/food/default.png";
 
@@ -27,6 +28,30 @@ const ProductDetailsScreen = () => {
   const id = parseFloat(typeof idString === "string" ? idString : idString[0]);
 
   const { data: product, error, isLoading } = useProduct(id);
+
+  const [selectedSize, setSelectedSize] = useState<PizzaSize>("M");
+
+  const getFactor = (size: PizzaSize) => {
+    if (size == "M") {
+      return 1;
+    } else if (size == "L") {
+      return 1.5;
+    } else if (size == "XL") {
+      return 2;
+    } else if (size == "S") {
+      return 0.8;
+    }
+    return 1;
+  };
+
+  const { addItem } = useCart();
+  const router = useRouter();
+
+  const addToCart = () => {
+    if (!product) return;
+    addItem(product, selectedSize);
+    router.push("/cart");
+  };
 
   if (isLoading) {
     return <Loader />;
@@ -38,7 +63,6 @@ const ProductDetailsScreen = () => {
       </View>
     );
   }
-
 
   return (
     <View style={styles.container}>
@@ -69,8 +93,36 @@ const ProductDetailsScreen = () => {
         fallback={defaultImage}
         style={{ ...styles.image, resizeMode: "contain" }}
       />
-      <Text style={styles.name}>{product?.name}</Text>
-      <Text style={styles.price}>Price: ${product?.price.toFixed(2)}</Text>
+
+      <Text style={styles.subtitle}>Select size</Text>
+      <View style={styles.sizes}>
+        {sizes.map((size) => (
+          <Pressable
+            onPress={() => setSelectedSize(size)}
+            key={size}
+            style={[
+              styles.size,
+              {
+                backgroundColor: size === selectedSize ? "gainsboro" : "white",
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.sizeText,
+                { color: size === selectedSize ? "black" : "gray" },
+              ]}
+            >
+              {size}
+            </Text>
+          </Pressable>
+        ))}
+      </View>
+      <Text style={styles.price}>
+        {`Price:  ₹ ${
+          product ? (product.price * getFactor(selectedSize)).toFixed(2) : ""
+        }`}
+      </Text>
     </View>
   );
 };
@@ -85,16 +137,32 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     alignSelf: "center",
   },
-
+  subtitle: {
+    marginVertical: 10,
+    fontWeight: "600",
+  },
   price: {
     fontSize: 18,
     fontWeight: "bold",
-    // marginTop: "auto",
+    marginVertical: "auto",
   },
-  name: {
+
+  sizes: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 5,
+  },
+  size: {
+    width: 50,
+    aspectRatio: 1,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  sizeText: {
     fontSize: 20,
-    fontWeight: "bold",
-    // marginTop: "auto",
+    fontWeight: "500",
+    color: "black",
   },
 });
 

@@ -97,7 +97,9 @@ const ProductDetailsScreen = () => {
         ))}
       </View>
       <Text style={styles.price}>
-        Price: ${product ? (product.price * getFactor(selectedSize)).toFixed(2) : ''}
+        {`Price:  ₹ ${
+          product ? (product.price * getFactor(selectedSize)).toFixed(2) : ""
+        }`}
       </Text>
       <Button onPress={addToCart} text="Add to cart" />
     </View>

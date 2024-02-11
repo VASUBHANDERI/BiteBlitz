@@ -36,13 +36,13 @@ const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
         <View style={{ flex: 1 }}>
           <Text style={styles.title}>{item.products?.name}</Text>
           <View style={styles.subtitleContainer}>
-            <Text style={styles.price}>${finalPrice.toFixed(2)}</Text>
+            <Text style={styles.price}>₹{finalPrice.toFixed(2)}</Text>
             <Text>Size: {item.size}</Text>
           </View>
         </View>
         <View style={styles.quantitySelector}>
           <Text style={styles.quantity}>{item.quantity}</Text>
-          <Text style={styles.finalTotal}>{finalTotal.toFixed(2)}</Text>
+          <Text style={styles.finalTotal}>₹{finalTotal.toFixed(2)}</Text>
         </View>
       </View>
     );
@@ -57,6 +57,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   image: {
     width: 75,
