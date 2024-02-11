@@ -40,6 +40,9 @@ export async function sendPushNotification(
 }
 
 export async function registerForPushNotificationsAsync() {
+  console.log(
+    "registerForPushNotificationsAsync ###############################################>>>>>>>>>>>>"
+  );
   let token;
 
   if (Platform.OS === "android") {
@@ -68,11 +71,12 @@ export async function registerForPushNotificationsAsync() {
         projectId: Constants.expoConfig?.extra?.eas.projectId,
       })
     ).data;
-    console.log(token);
+    console.log("got from register with token", token);
   } else {
     alert("Must use physical device for Push Notifications");
   }
 
+  console.log("returned token", token);
   return token;
 }
 

@@ -15,7 +15,9 @@ Notifications.setNotificationHandler({
 
 const NotificationProvider = ({ children }: PropsWithChildren) => {
   const [expoPushToken, setExpoPushToken] = useState<String | undefined>();
-
+  console.log(
+    "################# calling useAuth() in NotificationProvider #################"
+  );
   const { profile } = useAuth();
 
   const [notification, setNotification] =
@@ -24,21 +26,29 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
   const responseListener = useRef<Notifications.Subscription>();
 
   const savePushToken = async (newToken: string | undefined) => {
-    setExpoPushToken(newToken);
-    if(!newToken || !profile){
+    if (!newToken || !profile) {
+      console.log("No token or profile");
       return;
     }
+    setExpoPushToken(newToken);
+
     // update the token in the database
     await supabase
       .from("profiles")
       .update({ expo_push_token: newToken })
       .eq("id", profile.id);
 
-      console.log("Push token saved to database");
+    console.log("Push token saved to database");
   };
 
   useEffect(() => {
-    registerForPushNotificationsAsync().then((token) => savePushToken(token));
+    // registerForPushNotificationsAsync().then((token) => savePushToken(token));
+    const registerDevice = async () => {
+      const token = await registerForPushNotificationsAsync();
+      savePushToken(token);
+    };
+
+    registerDevice();
 
     notificationListener.current =
       Notifications.addNotificationReceivedListener((notification) => {
@@ -60,10 +70,10 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
         Notifications.removeNotificationSubscription(responseListener.current);
       }
     };
-  }, []);
+  }, [profile]);
 
   console.log("Push token: ", expoPushToken);
-  console.log("Notif: ", notification);
+  // console.log("Notif: ", notification);
 
   return <>{children}</>;
 };

@@ -54,10 +54,10 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           .single();
         setProfile(data || null);
         setIsAdmin(data?.group === "ADMIN");
-
         console.log("on fetchSession profile: ", profile);
       } else {
         setIsLoggedIn(false);
+        setProfile(null);
       }
       setLoading(false);
     };
@@ -72,7 +72,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       console.log("on onAuthStateChange session: ", session);
       if (session) {
         // fetch profile
-        setIsLoggedIn(true);
+
         const { data } = await supabase
           .from("profiles")
           .select("*")
@@ -80,19 +80,17 @@ export default function AuthProvider({ children }: PropsWithChildren) {
           .single();
         setProfile(data);
         setIsAdmin(data?.group === "ADMIN");
-        console.log("on onAuthStateChange New profile: ", profile);
+        console.log("on onAuthStateChange isAdmin: ", isAdmin);
+        setIsLoggedIn(true);
         setLoading(false);
       } else {
         setLoading(true);
         setSession(null);
         setIsLoggedIn(false);
-        console.log("setted session to null");
+        console.log("Setted session to null");
         setLoading(false);
       }
     });
-    setIsAdmin(profile?.group === "ADMIN");
-    console.log("on onAuthStateChange isAdmin: ", isAdmin);
-    setLoading(false);
   }, [isAdmin, isLoggedIn]);
 
   const setIsLoggedin = (isLoggedin: boolean) => {

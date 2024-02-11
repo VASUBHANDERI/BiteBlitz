@@ -21,8 +21,7 @@ const index = () => {
     return <Redirect href={"/(auth)/sign-in"} />;
   } else if (!isAdmin) {
     return <Redirect href={"/(user)"} />;
-  }
-  if (isAdmin) {
+  } else if (isAdmin) {
     return (
       <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
         <Link href={"/(user)"} asChild>
