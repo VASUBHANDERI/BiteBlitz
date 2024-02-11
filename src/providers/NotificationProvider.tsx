@@ -39,8 +39,8 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
     };
   }, []);
 
-console.log(notification);
-console.log(expoPushToken);
+console.log("Notification: ",notification);
+console.log("Push Token: ",expoPushToken);
 
   return <>{children}</>;
 };
