@@ -14,6 +14,7 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import { useCart } from "@/providers/CartProvider";
 import { useProduct } from "@/api/products";
 import RemoteImage from "@/components/RemoteImage";
+import Loader from "@/components/Loader";
 
 const sizes: PizzaSize[] = ["S", "M", "L", "XL"];
 const priceFactor: number[] = [0.8, 1, 1.5, 2];
@@ -52,7 +53,7 @@ const ProductDetailsScreen = () => {
   };
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <Loader />;
   }
   if (error) {
     return (

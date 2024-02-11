@@ -11,6 +11,8 @@ import OrderItemListItem from "../../../components/OrderItemListItem";
 import OrderListItem from "../../../components/OrderListItem";
 import { useOrderDetails } from "@/api/orders";
 import { useUpdateOrderSubscription } from "@/api/orders/subscription";
+import Bill from "@/components/Bill";
+import Loader from "@/components/Loader";
 
 const OrderDetailScreen = () => {
   const { id: idString } = useLocalSearchParams();
@@ -19,8 +21,8 @@ const OrderDetailScreen = () => {
   const { data: order, isLoading, error } = useOrderDetails(id);
   useUpdateOrderSubscription(id);
 
-  if (isLoading) {
-    return <ActivityIndicator />;
+  if (isLoading || !order) {
+    return <Loader />;
   }
   if (error) {
     return (
@@ -39,6 +41,7 @@ const OrderDetailScreen = () => {
         renderItem={({ item }) => <OrderItemListItem item={item} />}
         contentContainerStyle={{ gap: 10 }}
         ListHeaderComponent={() => order && <OrderListItem order={order} />}
+        ListFooterComponent={() => <Bill orderTotal={order.total} />}
       />
     </View>
   );

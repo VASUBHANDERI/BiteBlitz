@@ -4,6 +4,7 @@ import OrderListItem from "@components/OrderListItem";
 import { Stack } from "expo-router";
 import { useAdminOrderList } from "@/api/orders";
 import { ActivityIndicator } from "react-native";
+import Loader from "@/components/Loader";
 
 export default function OrdersScreen() {
   const {
@@ -12,7 +13,7 @@ export default function OrdersScreen() {
     error,
   } = useAdminOrderList({ archived: true });
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <Loader />;
   }
   if (error) {
     return (

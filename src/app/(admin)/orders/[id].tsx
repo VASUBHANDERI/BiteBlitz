@@ -15,6 +15,8 @@ import { OrderStatusList } from "@/types";
 import { useOrderDetails, useUpdateOrder } from "@/api/orders";
 import { useUpdateOrderSubscription } from "@/api/orders/subscription";
 import { notifyUserAboutOrderUPdate } from "@/lib/notifications";
+import Bill from "@/components/Bill";
+import Loader from "@/components/Loader";
 
 const OrderDetailScreen = () => {
   const { id: idString } = useLocalSearchParams();
@@ -33,7 +35,7 @@ const OrderDetailScreen = () => {
   useUpdateOrderSubscription(id);
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <Loader />;
   }
   if (error || !order) {
     return (
@@ -54,6 +56,7 @@ const OrderDetailScreen = () => {
         ListHeaderComponent={() => <OrderListItem order={order} />}
         ListFooterComponent={() => (
           <>
+            <Bill orderTotal={order.total} />
             <Text style={{ fontWeight: "bold" }}>Status</Text>
             <View style={{ flexDirection: "row", gap: 5 }}>
               {OrderStatusList.map((status) => (

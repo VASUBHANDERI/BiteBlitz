@@ -5,12 +5,13 @@ import ProductListItem from "../../../components/ProductListItem";
 import { supabase } from "@/lib/supabase";
 import { useQuery } from "@tanstack/react-query";
 import { useProductList } from "@/api/products";
+import Loader from "@/components/Loader";
 
 export default function MenuScreen() {
   const { data: products, error, isLoading } = useProductList(); // Fetches the list of products.
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <Loader />;
   }
   if (error) {
     return (

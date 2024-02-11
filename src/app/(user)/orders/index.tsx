@@ -3,11 +3,12 @@ import orders from "../../../../assets/data/orders";
 import OrderListItem from "../../../components/OrderListItem";
 import { Stack } from "expo-router";
 import { useMyOrderList } from "@/api/orders";
+import Loader from "@/components/Loader";
 
 export default function OrdersScreen() {
   const { data: orders, isLoading, error } = useMyOrderList();
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <Loader/>;
   }
   if (error) {
     return (

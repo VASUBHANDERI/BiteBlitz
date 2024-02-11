@@ -8,6 +8,7 @@ import {
   useInsertOrderSubscription,
   useUpdateOrderSubscription,
 } from "@/api/orders/subscription";
+import Loader from "@/components/Loader";
 
 export default function OrdersScreen() {
   const {
@@ -21,7 +22,7 @@ export default function OrdersScreen() {
 
 
   if (isLoading) {
-    return <ActivityIndicator />;
+    return <Loader />;
   }
   if (error) {
     return (

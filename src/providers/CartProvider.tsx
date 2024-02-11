@@ -9,7 +9,7 @@ type CartType = {
   items: CartItem[];
   addItem: (product: Tables<"products">, size: CartItem["size"]) => void;
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
-  total: Number;
+  total: number;
   checkout: () => void;
 };
 const CartContext = createContext<CartType>({

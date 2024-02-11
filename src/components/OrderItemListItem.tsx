@@ -42,7 +42,7 @@ const OrderItemListItem = ({ item }: OrderItemListItemProps) => {
         </View>
         <View style={styles.quantitySelector}>
           <Text style={styles.quantity}>{item.quantity}</Text>
-          <Text style={styles.finalTotal}>{finalTotal}</Text>
+          <Text style={styles.finalTotal}>{finalTotal.toFixed(2)}</Text>
         </View>
       </View>
     );
