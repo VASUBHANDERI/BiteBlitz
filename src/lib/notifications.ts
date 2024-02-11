@@ -37,6 +37,7 @@ export async function sendPushNotification(
     },
     body: JSON.stringify(message),
   });
+  console.log("Sent push notification to token: ", expoPushToken);
 }
 
 export async function registerForPushNotificationsAsync() {
@@ -90,8 +91,8 @@ const getUserToken = async (userId: string) => {
 };
 
 export const notifyUserAboutOrderUPdate = async (order: Tables<"orders">) => {
+  console.log("order update notification triggered!");
   const token = await getUserToken(order.user_id);
-
   sendPushNotification(
     token,
     `Order #${order.id}`,

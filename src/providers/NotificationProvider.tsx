@@ -38,7 +38,7 @@ const NotificationProvider = ({ children }: PropsWithChildren) => {
       .update({ expo_push_token: newToken })
       .eq("id", profile.id);
 
-    console.log("Push token saved to database");
+    console.log("Push token saved to database. Token: ", newToken);
   };
 
   useEffect(() => {

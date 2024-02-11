@@ -26,7 +26,7 @@ const OrderDetailScreen = () => {
   const updateStatus = async (status: string) => {
     await updateOrder({ id: id, updatedFields: { status } });
     if (order) {
-  await notifyUserAboutOrderUPdate({...order, status});
+      await notifyUserAboutOrderUPdate({ ...order, status });
     }
   };
 
