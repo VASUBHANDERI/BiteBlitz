@@ -5,6 +5,7 @@ import { Link, Redirect } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
 import { ActivityIndicator } from "react-native";
 import { supabase } from "@/lib/supabase";
+import Loader from "@/components/Loader";
 
 const index = () => {
   console.log(
@@ -15,7 +16,7 @@ const index = () => {
 
   if (loading) {
     console.log("indexScreen loading: ", loading);
-    return <ActivityIndicator />;
+    return <Loader />;
   } else if (!isLoggedIn) {
     console.log("Found Session: ", session);
     return <Redirect href={"/(auth)/sign-in"} />;

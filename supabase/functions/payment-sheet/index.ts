@@ -1,31 +1,55 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
-import { stripe } from '../_utils/stripe.ts';
+// Follow this setup guide to integrate the Deno language server with your editor:
+// https://deno.land/manual/getting_started/setup_your_environment
+// This enables autocomplete, go to definition, etc.
 
-console.log('Hello from Functions!');
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { stripe } from "../_utils/stripe.ts";
+import { createOrRetrieveProfile } from "../_utils/supabase.ts";
 
-serve(async (req) => {
+console.log("Hello from Functions!");
+console.log(stripe);
+serve(async (req: Request) => {
   try {
     const { amount } = await req.json();
 
-    // Create a PaymentIntent so that the SDK can charge the logged in customer.
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: 1099,
-      currency: 'usd',
-      // customer: customer,
+    const customer = await createOrRetrieveProfile(req);
+
+    console.log("Customer: ", customer);
+
+    // Create an ephermeralKey so that the Stripe SDK can fetch the customer's stored payment methods.
+    const ephemeralKey = stripe
+      ? await (stripe as any).ephemeralKeys.create(
+        { customer: customer },
+        { apiVersion: "2020-08-27" },
+      )
+      : null;
+
+    const paymentIntent = await (stripe as any).paymentIntents.create({
+      amount: amount,
+      currency: "usd",
+      customer: customer,
+      payment_method_types: ["card"],
     });
+
+    console.log("payment-sheet-> index.ts =>> PaymentIntent: ", paymentIntent);
+
     const res = {
-      publishableKey: Deno.env.get('EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY'),
       paymentIntent: paymentIntent.client_secret,
-      // ephemeralKey: ephemeralKey.secret,
-      // customer: customer,
+      publishableKey:
+        "pk_test_51Oiw3uSHfUqzCe9DDiNNf0IFMubMevsaFGbbohh66EQjBMpDZVIUHHNYI5DevarvPxLAgxdZBdilcECgZg2C9z1W00gdj72awv",
+      customer: customer,
+      ephemeralKey: ephemeralKey.secret,
     };
+
+    console.log("payment-sheet-> index.ts =>> response", res);
+
     return new Response(JSON.stringify(res), {
-      headers: { 'Content-Type': 'application/json' },
-      status: 200,
+      headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.log(error);
     return new Response(JSON.stringify(error), {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
       status: 400,
     });
   }

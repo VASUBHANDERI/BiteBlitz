@@ -4,12 +4,14 @@ import { randomUUID } from "expo-crypto";
 import { useInsertOrder } from "@/api/orders";
 import { useRouter } from "expo-router";
 import { useInsertOrderItems } from "@/api/order-items";
+import { initialisePaymentSheet, openPaymentSheet } from "@/lib/stripe";
 
 type CartType = {
   items: CartItem[];
   addItem: (product: Tables<"products">, size: CartItem["size"]) => void;
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
   total: number;
+  grandTotal: number;
   checkout: () => void;
 };
 const CartContext = createContext<CartType>({
@@ -17,6 +19,7 @@ const CartContext = createContext<CartType>({
   addItem: () => {},
   updateQuantity: () => {},
   total: 0,
+  grandTotal: 0,
   checkout: () => {},
 });
 
@@ -65,15 +68,19 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     return 1;
   };
   const total: number = items.reduce(
-    (sum: number, item: CartItem) => sum + item.quantity * item.product.price * getFactor(item.size),
+    (sum: number, item: CartItem) =>
+      sum + item.quantity * item.product.price * getFactor(item.size),
     0
+  );
+  const grandTotal: number = Number(
+    (total + total * 0.05 + (total > 1500 ? 0 : total * 0.1)).toFixed(2)
   );
   const clearCart = () => {
     setItems([]);
   };
 
   const saveOrderItems = (order: Tables<"orders">) => {
-    const orderItems = items.map((CartItem)=> {
+    const orderItems = items.map((CartItem) => {
       return {
         product_id: CartItem.product_id,
         order_id: order.id,
@@ -82,13 +89,21 @@ const CartProvider = ({ children }: PropsWithChildren) => {
       };
     });
 
-   insertOrderItems(orderItems,{onSuccess(){
-    clearCart();
-    router.push(`/(user)/orders/${order.id}`);
-   }})
+    insertOrderItems(orderItems, {
+      onSuccess() {
+        clearCart();
+        router.push(`/(user)/orders/${order.id}`);
+      },
+    });
   };
 
-  const checkout = () => {
+  const checkout = async () => {
+    // await initialisePaymentSheet(Math.floor(grandTotal * 100));
+    // console.log("Payment sheet initialized:::::::, now Opening the payment sheet..........")
+    // const payed = await openPaymentSheet();
+    // if (!payed) {
+    //   return;
+    // }
     insertOrder(
       { total },
       {
@@ -98,7 +113,7 @@ const CartProvider = ({ children }: PropsWithChildren) => {
   };
   return (
     <CartContext.Provider
-      value={{ items, addItem, updateQuantity, total, checkout }}
+      value={{ items, addItem, updateQuantity, total, checkout, grandTotal }}
     >
       {children}
     </CartContext.Provider>
