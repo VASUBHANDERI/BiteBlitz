@@ -1,5 +1,5 @@
 import { View, Text, Platform, FlatList, Switch, Alert } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { useCart } from "@/providers/CartProvider";
 import CartListItem from "@/components/CartListItem";
@@ -7,23 +7,14 @@ import Button from "@/components/Button";
 import Bill from "@/components/Bill";
 import { StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
-import CheckBox from "react-native-check-box";
-import { useRouter } from "expo-router";
-import { fetchPaymentSheetParams } from "@/lib/stripe";
-import {
-  PlatformPay,
-  PlatformPayButton,
-  usePlatformPay,
-  useStripe,
-} from "@stripe/stripe-react-native";
+
 import RazorpayCheckout from "react-native-razorpay";
 import { getOrder_id } from "@/api/payment/payment";
+import { useAuth } from "@/providers/AuthProvider";
 
 export default function CartScreen() {
   const { items, total, checkout, grandTotal } = useCart();
-  const [cod, setCod] = useState(true);
-  const toggleSwitch = () => setCod((previousState) => !previousState);
-  const { initPaymentSheet, presentPaymentSheet } = useStripe();
+  const { profile } = useAuth();
 
   if (items.length === 0) {
     return (
@@ -33,39 +24,36 @@ export default function CartScreen() {
     );
   }
 
-  const handlePayment = async (amount: number) => {
+const handlePayment = async (amount:number) => {
     const order_id = await getOrder_id(amount);
     console.log("order_id: ", order_id);
-
+    console.log("Type: ", typeof RazorpayCheckout, "fun", RazorpayCheckout);
     var options = {
-      description: "Buy BMW CAR",
-      image: "https://i.imgur.com/3g7nmJC.png",
+      description: "Buying Food",
+      image: require("../../assets/images/icon.png"),
       currency: "INR",
       key: "rzp_test_IKwLnkrt4wamMz",
       amount: amount * 100,
-      name: "test order",
+      name: "Pay to BiteBlitz",
       order_id: order_id.toString(), //Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
       prefill: {
-        email: "xyz@gmail.com",
-        contact: "9999999999",
-        name: "User 1",
+        email: profile?.email || "abc@gmail.com",
+        contact: profile?.mobile || "9999999999",
+        name: profile?.full_name || "John Doe",
       },
-      theme: { color: "#F37254" },
+      theme: { color: Colors.light.tint },
     };
 
     if (RazorpayCheckout && typeof RazorpayCheckout.open === "function") {
-      console.log(RazorpayCheckout.open);
-      setTimeout(() => {
-        RazorpayCheckout.open(options)
-          .then((data) => {
-            // handle success
-            console.log(`Success: ${data.razorpay_payment_id}`);
-          })
-          .catch((error) => {
-            // handle failure
-            console.log(`Error: ${error} | ${error.description}`);
-          });
-      }, 1000); // delay of 1 second
+      await RazorpayCheckout.open(options)
+        .then((data) => {
+          // handle success
+          alert(`Success: ${data.razorpay_payment_id}`);
+        })
+        .catch((error) => {
+          // handle failure
+          alert(`${error}`);
+        });
     } else {
       console.error(
         "RazorpayCheckout is not available or not properly initialized."
@@ -90,7 +78,7 @@ export default function CartScreen() {
         onPress={() => {
           handlePayment(grandTotal);
         }}
-        text={`Pay ${grandTotal}`}
+        text={`Pay ₹${grandTotal}`}
       />
 
       {/* <PlatformPayButton
