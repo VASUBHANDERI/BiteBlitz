@@ -11,9 +11,11 @@ import Colors from "@/constants/Colors";
 import RazorpayCheckout from "react-native-razorpay";
 import { getOrder_id } from "@/api/payment/payment";
 import { useAuth } from "@/providers/AuthProvider";
+import PaymentMode from "@/components/PaymentMode";
 
 export default function CartScreen() {
   const { items, total, checkout, grandTotal } = useCart();
+  const [COD, setCOD] = useState(true);
   const { profile } = useAuth();
 
   if (items.length === 0) {
@@ -24,7 +26,7 @@ export default function CartScreen() {
     );
   }
 
-const handlePayment = async (amount:number) => {
+  const handlePayment = async (amount: number) => {
     const order_id = await getOrder_id(amount);
     console.log("order_id: ", order_id);
     console.log("Type: ", typeof RazorpayCheckout, "fun", RazorpayCheckout);
@@ -48,16 +50,26 @@ const handlePayment = async (amount:number) => {
       await RazorpayCheckout.open(options)
         .then((data) => {
           // handle success
-          alert(`Success: ${data.razorpay_payment_id}`);
+          //
+          checkout(false);
         })
         .catch((error) => {
           // handle failure
-          alert(`${error}`);
+          console.log("Error: ", error);
+          alert(`Payment Failed !`);
         });
     } else {
       console.error(
         "RazorpayCheckout is not available or not properly initialized."
       );
+    }
+  };
+
+  const placeOrder = async (COD: boolean) => {
+    if (COD) {
+      checkout(true);
+    } else {
+      handlePayment(grandTotal);
     }
   };
 
@@ -70,27 +82,23 @@ const handlePayment = async (amount:number) => {
         ListFooterComponent={() => (
           <>
             <Bill orderTotal={total} />
+            <PaymentMode
+              COD={COD}
+              onChangeMode={(COD) => {
+                setCOD(COD);
+              }}
+            />
           </>
         )}
       />
 
       <Button
         onPress={() => {
-          handlePayment(grandTotal);
+          placeOrder(COD);
         }}
-        text={`Pay ₹${grandTotal}`}
+        text={!COD ? `Pay ₹${grandTotal}` : "Place Order"}
       />
 
-      {/* <PlatformPayButton
-        type={PlatformPay.ButtonType.Pay}
-        onPress={() => {
-          onCheckout(grandTotal);
-        }}
-        style={{
-          width: "90%",
-          height: 50,
-        }}
-      /> */}
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>
   );

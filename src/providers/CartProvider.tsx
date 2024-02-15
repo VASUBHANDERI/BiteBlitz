@@ -12,7 +12,8 @@ type CartType = {
   updateQuantity: (itemId: string, amount: -1 | 1) => void;
   total: number;
   grandTotal: number;
-  checkout: () => void;
+  checkout: (value:boolean) => void;
+
 };
 const CartContext = createContext<CartType>({
   items: [],
@@ -21,12 +22,27 @@ const CartContext = createContext<CartType>({
   total: 0,
   grandTotal: 0,
   checkout: () => {},
+ 
 });
 
 const CartProvider = ({ children }: PropsWithChildren) => {
   const { mutate: insertOrder } = useInsertOrder();
   const { mutate: insertOrderItems } = useInsertOrderItems();
+  const generateOTP = () => {
+    var digits = "0123456789";
 
+    var otpLength = 4;
+
+    var otp = "";
+
+    for (let i = 1; i <= otpLength; i++) {
+      var index = Math.floor(Math.random() * digits.length);
+
+      otp = otp + digits[index];
+    }
+
+    return otp;
+  };
   const router = useRouter();
   const [items, setItems] = useState<CartItem[]>([]);
   const addItem = (product: Tables<"products">, size: CartItem["size"]) => {
@@ -97,15 +113,10 @@ const CartProvider = ({ children }: PropsWithChildren) => {
     });
   };
 
-  const checkout = async () => {
-    // await initialisePaymentSheet(Math.floor(grandTotal * 100));
-    // console.log("Payment sheet initialized:::::::, now Opening the payment sheet..........")
-    // const payed = await openPaymentSheet();
-    // if (!payed) {
-    //   return;
-    // }
+  const checkout = async (COD:boolean) => {
+    const delivery_code = generateOTP();
     insertOrder(
-      { total },
+      { total, delivery_code },
       {
         onSuccess: saveOrderItems,
       }

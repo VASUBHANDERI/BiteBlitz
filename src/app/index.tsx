@@ -1,5 +1,5 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../components/Button";
 import { Link, Redirect } from "expo-router";
 import { useAuth } from "@/providers/AuthProvider";
@@ -11,8 +11,13 @@ const index = () => {
   console.log(
     "############################Starting Index Screen ############################"
   );
+  const { session, loading, isAdmin, isLoggedIn } = useAuth();
 
-  const { session, loading, isAdmin, isLoggedIn, setIsLoggedin } = useAuth();
+  // useEffect(() => {
+  //   const { session, loading, isAdmin, isLoggedIn, setIsLoggedin } = useAuth();
+  // }, [loading]);
+
+  // const { session, loading, isAdmin, isLoggedIn, setIsLoggedin } = useAuth();
 
   if (loading) {
     console.log("indexScreen loading: ", loading);

@@ -14,5 +14,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-, "src/app/cart.tsx"  ]
+, "src/app/cart.tsx", "src/components/CodeInput.tsx"  ]
 }

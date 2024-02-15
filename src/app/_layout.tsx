@@ -16,6 +16,7 @@ import QueryProvider from "@/providers/QueryProvider";
 import NotificationProvider from "@/providers/NotificationProvider";
 import { StripeProvider } from "@stripe/stripe-react-native";
 import StripeFunctionsProvider from "@/providers/StripeFunctionsProvider";
+import CodeProvider from "@/providers/CodeProvider";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -56,7 +57,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
+console.log(process.env.STRIPE_PUBLISHABLE_KEY);
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <StripeProvider publishableKey={process.env.STRIPE_PUBLISHABLE_KEY || ""}>
@@ -65,41 +66,43 @@ function RootLayoutNav() {
             <QueryProvider>
               <NotificationProvider>
                 <CartProvider>
-                  <Stack>
-                    <Stack.Screen
-                      name="(auth)"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="(user)"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="(admin)"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="index"
-                      options={{ headerShown: false }}
-                    />
+                  <CodeProvider>
+                    <Stack>
+                      <Stack.Screen
+                        name="(auth)"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="(user)"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="(admin)"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="index"
+                        options={{ headerShown: false }}
+                      />
 
-                    <Stack.Screen
-                      name="cart"
-                      options={{
-                        presentation: "modal",
-                        animation: "slide_from_bottom",
-                        title: "Cart",
-                      }}
-                    />
-                    <Stack.Screen
-                      name="payment"
-                      options={{
-                        // presentation: "modal",
-                        animation: "slide_from_bottom",
-                        title: "Payment",
-                      }}
-                    />
-                  </Stack>
+                      <Stack.Screen
+                        name="cart"
+                        options={{
+                          presentation: "modal",
+                          animation: "slide_from_bottom",
+                          title: "Cart",
+                        }}
+                      />
+                      <Stack.Screen
+                        name="payment"
+                        options={{
+                          // presentation: "modal",
+                          animation: "slide_from_bottom",
+                          title: "Payment",
+                        }}
+                      />
+                    </Stack>
+                  </CodeProvider>
                 </CartProvider>
               </NotificationProvider>
             </QueryProvider>

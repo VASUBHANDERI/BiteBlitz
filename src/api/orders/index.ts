@@ -1,10 +1,12 @@
 import { supabase } from "@/lib/supabase";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Order, Tables, InsertTables, UpdateTables } from "@/types";
+import { InsertTables, Order, Tables, UpdateTables } from "@/types";
 import { useAuth } from "@/providers/AuthProvider";
+import { useProfile } from "../profiles";
 
 export const useAdminOrderList = ({ archived = false }) => {
   //TODO: Implement Cancellation of order feature also
+
   const statuses = archived ? ["Delivered"] : ["New", "Cooking", "Delivering"];
   return useQuery({
     queryKey: ["orders", { archived }],
@@ -57,7 +59,17 @@ export const useOrderDetails = (id: number) => {
       if (error) {
         throw new Error(error.message);
       }
-      return data;
+      const { data: profile, error: profileError } = await supabase
+        .from("profiles")
+        .select("address")
+        .eq("id", data.user_id)
+        .single();
+
+      if (profileError) {
+        throw new Error(profileError.message);
+      }
+
+      return { ...data, profile };
     },
   });
 };
