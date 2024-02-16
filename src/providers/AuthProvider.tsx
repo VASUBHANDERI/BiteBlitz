@@ -72,7 +72,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       console.log("on onAuthStateChange session: ", session);
       if (session) {
         // fetch profile
-
+        setLoading(false);
         const { data } = await supabase
           .from("profiles")
           .select("*")
@@ -91,7 +91,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         setLoading(false);
       }
     });
-  }, [isAdmin, isLoggedIn]);
+  }, [isAdmin, isLoggedIn,loading]);
 
   const setIsLoggedin = (isLoggedin: boolean) => {
     setIsLoggedIn(isLoggedin);

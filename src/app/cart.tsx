@@ -1,30 +1,33 @@
-import { View, Text, Platform, FlatList, Switch, Alert } from "react-native";
 import React, { useState } from "react";
+import { View, Text, Platform, FlatList, Alert } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useCart } from "@/providers/CartProvider";
 import CartListItem from "@/components/CartListItem";
 import Button from "@/components/Button";
 import Bill from "@/components/Bill";
+import PaymentMode from "@/components/PaymentMode";
+import Address from "@/components/Address";
+import { Link } from "expo-router";
+import { useAuth } from "@/providers/AuthProvider";
+import { useProfile } from "@/api/profiles";
+import { getOrder_id } from "@/api/payment/payment";
+import RazorpayCheckout from "react-native-razorpay";
 import { StyleSheet } from "react-native";
 import Colors from "@/constants/Colors";
 
-import RazorpayCheckout from "react-native-razorpay";
-import { getOrder_id } from "@/api/payment/payment";
-import { useAuth } from "@/providers/AuthProvider";
-import PaymentMode from "@/components/PaymentMode";
-
 export default function CartScreen() {
   const { items, total, checkout, grandTotal } = useCart();
-  const [COD, setCOD] = useState(true);
   const { profile } = useAuth();
+  const { data } = useProfile(profile?.id || "");
+  const [COD, setCOD] = useState(true);
 
-  if (items.length === 0) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Your cart is empty</Text>
-      </View>
-    );
-  }
+  const haveAddress = () => {
+    if (data !== undefined && data.address !== null && data.address !== "") {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const handlePayment = async (amount: number) => {
     const order_id = await getOrder_id(amount);
@@ -37,7 +40,7 @@ export default function CartScreen() {
       key: "rzp_test_IKwLnkrt4wamMz",
       amount: amount * 100,
       name: "Pay to BiteBlitz",
-      order_id: order_id.toString(), //Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+      order_id: order_id.toString(),
       prefill: {
         email: profile?.email || "abc@gmail.com",
         contact: profile?.mobile || "9999999999",
@@ -49,13 +52,10 @@ export default function CartScreen() {
     if (RazorpayCheckout && typeof RazorpayCheckout.open === "function") {
       await RazorpayCheckout.open(options)
         .then((data) => {
-          // handle success
-          //
-          checkout(false);
+          checkout(false); // handle success
         })
         .catch((error) => {
-          // handle failure
-          console.log("Error: ", error);
+          console.log("Error: ", error); // handle failure
           alert(`Payment Failed !`);
         });
     } else {
@@ -73,31 +73,58 @@ export default function CartScreen() {
     }
   };
 
-  return (
-    <View style={{ padding: 10, flex: 1 }}>
-      <FlatList
-        data={items}
-        renderItem={({ item }) => <CartListItem cartItem={item} />}
-        contentContainerStyle={{ paddingVertical: 10, gap: 10 }}
-        ListFooterComponent={() => (
-          <>
-            <Bill orderTotal={total} />
-            <PaymentMode
-              COD={COD}
-              onChangeMode={(COD) => {
-                setCOD(COD);
-              }}
-            />
-          </>
-        )}
-      />
+  const profileLink =
+    data?.group === "ADMIN" ? "/(admin)/profile" : "/(user)/profile";
 
-      <Button
-        onPress={() => {
-          placeOrder(COD);
-        }}
-        text={!COD ? `Pay ₹${grandTotal}` : "Place Order"}
-      />
+  return (
+    <View style={{ padding: 10, flex: 1}}>
+      {items.length === 0 ? (
+        <View style={styles.container}>
+          <Text style={styles.text}>Your cart is empty</Text>
+        </View>
+      ) : (
+        <View style={{flex:1}}>
+          <FlatList
+            data={items}
+            renderItem={({ item }) => <CartListItem cartItem={item} />}
+            contentContainerStyle={{ paddingVertical: 10, gap: 10 }}
+            ListFooterComponent={() => (
+              <>
+                <Bill orderTotal={total} />
+                <PaymentMode
+                  COD={COD}
+                  onChangeMode={(COD) => {
+                    setCOD(COD);
+                  }}
+                />
+                {haveAddress() ? (
+                  <Address address={data?.address || " "} />
+                ) : (
+                  <Link
+                    href={profileLink as `${string}:${string}`}
+                    style={{
+                      backgroundColor: "white",
+                      borderRadius: 10,
+                      padding: 5,
+                      flex: 1,
+                      marginTop: 10,
+                      paddingBottom: 10,
+                    }}
+                  >
+                    <Text>Add Address</Text>
+                  </Link>
+                )}
+              </>
+            )}
+          />
+          <Button
+            onPress={() => {
+              placeOrder(COD);
+            }}
+            text={!COD ? `Pay ₹${grandTotal}` : "Place Order"}
+          />
+        </View>
+      )}
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </View>

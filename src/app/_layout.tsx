@@ -57,7 +57,7 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-console.log(process.env.STRIPE_PUBLISHABLE_KEY);
+  console.log(process.env.STRIPE_PUBLISHABLE_KEY);
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <StripeProvider publishableKey={process.env.STRIPE_PUBLISHABLE_KEY || ""}>
@@ -91,14 +91,6 @@ console.log(process.env.STRIPE_PUBLISHABLE_KEY);
                           presentation: "modal",
                           animation: "slide_from_bottom",
                           title: "Cart",
-                        }}
-                      />
-                      <Stack.Screen
-                        name="payment"
-                        options={{
-                          // presentation: "modal",
-                          animation: "slide_from_bottom",
-                          title: "Payment",
                         }}
                       />
                     </Stack>

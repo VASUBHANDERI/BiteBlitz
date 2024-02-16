@@ -7,21 +7,24 @@ import {
 } from "react-native-confirmation-code-field";
 import { Text, StyleSheet, View } from "react-native";
 import { useCode } from "@/providers/CodeProvider";
+import Colors from "@/constants/Colors";
 const styles1 = StyleSheet.create({
-  root: { flex: 1, padding: 20 },
-  title: { textAlign: "center", fontSize: 30 },
+  root: { flex: 1, marginVertical: 5 },
+  title: { fontSize: 16 },
   codeFieldRoot: { marginTop: 20 },
   cell: {
-    width: 40,
-    height: 40,
-    lineHeight: 38,
+    width: 50,
+    height: 50,
+    lineHeight: 48,
     fontSize: 24,
     borderWidth: 2,
-    borderColor: "#00000030",
+    borderColor: Colors.light.tintBackground,
     textAlign: "center",
+    borderRadius: 5,
+    color:Colors.light.tint,
   },
   focusCell: {
-    borderColor: "#000",
+    borderColor: Colors.light.tint,
   },
 });
 
@@ -43,7 +46,7 @@ const CodeInput = () => {
 
   return (
     <View style={styles1.root}>
-      <Text style={styles1.title}>Verification</Text>
+      <Text style={styles1.title}>Delivery Code</Text>
       <CodeField
         ref={ref}
         // Use `caretHidden={false}` when users can't paste a text value, because context menu doesn't appear
