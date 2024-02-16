@@ -28,18 +28,7 @@ const index = () => {
   } else if (!isAdmin) {
     return <Redirect href={"/(user)"} />;
   } else if (isAdmin) {
-    return (
-      <View style={{ flex: 1, justifyContent: "center", padding: 10 }}>
-        <Link href={"/(user)"} asChild>
-          <Button text="User" />
-        </Link>
-        <Link href={"/(admin)"} asChild>
-          <Button text="Admin" />
-        </Link>
-
-        <Button text="Sign Out" onPress={() => supabase.auth.signOut()} />
-      </View>
-    );
+    return <Redirect href={"/(admin)"} />;
   }
 };
 
